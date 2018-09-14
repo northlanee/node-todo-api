@@ -7,22 +7,49 @@ mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true })
 
 let Todo = mongoose.model('Todo', {
     text: {
-        type: String
+        type: String,
+        required: true,
+        minlength: 1,
+        trim: true
     },
     completed: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     completedAt: {
-        type: Number
+        type: Number,
+        default: null
     }
 });
 
-let newTodo = new Todo({
-    text: "Wash fish"
+let User = mongoose.model('User', {
+    login: {
+        type: String,
+        required: true,
+        minlength: 4,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 4,
+        trim: true
+    }
 });
 
-newTodo.save()
-    .then((data) => {
-        console.log(data);
-    })
+let newUser = new User({
+    login: "Northlanee",
+    password: "1234"
+});
+
+newUser.save()
+    .then(data => console.log(data))
     .catch(err => console.log(err));
+
+//let newTodo = new Todo({text: "   Fch this shit         "});
+//
+// newTodo.save()
+//     .then((data) => {
+//         console.log(data);
+//     })
+//     .catch(err => console.log(err));
