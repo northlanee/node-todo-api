@@ -1,55 +1,29 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const bodyParser = require("body-parser");
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true })
-    .then(() => console.log('connected'))
-    .catch(err => console.log(err));
+const {mongoose} = require("./db/mongoose");
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
 
-let Todo = mongoose.model('Todo', {
-    text: {
-        type: String,
-        required: true,
-        minlength: 1,
-        trim: true
-    },
-    completed: {
-        type: Boolean,
-        default: false
-    },
-    completedAt: {
-        type: Number,
-        default: null
-    }
+let app = express();
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.get("/", (req, res) => {
+    res.send('he');
 });
 
-let User = mongoose.model('User', {
-    login: {
-        type: String,
-        required: true,
-        minlength: 4,
-        trim: true
-    },
-    password: {
-        type: String,
-        required: true,
-        minlength: 4,
-        trim: true
-    }
+app.post("/todos", (req, res) => {
+    let todo = new Todo({
+        text: req.body.text
+    });
+
+    todo.save()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch(e => res.status(400).send(e));
+
 });
 
-let newUser = new User({
-    login: "Northlanee",
-    password: "1234"
-});
-
-newUser.save()
-    .then(data => console.log(data))
-    .catch(err => console.log(err));
-
-//let newTodo = new Todo({text: "   Fch this shit         "});
-//
-// newTodo.save()
-//     .then((data) => {
-//         console.log(data);
-//     })
-//     .catch(err => console.log(err));
+app.listen(3000, () => console.log('Server is running'));
